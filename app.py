@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 import openai
 import google.generativeai as genai
 import anthropic
@@ -27,22 +26,47 @@ LANGUAGES = {
     "ko": {
         "name": "한국어", "flag": "🇰🇷",
         "app_title": "🎯 Strategist AI Pro",
-        "app_subtitle": "학술 연구 전략 컨설팅 | PDF 자동 분석 | APA 참고문헌 자동생성",
+        "app_subtitle": "학술 연구 전략 컨설팅 | 3-Engine 하이브리드 | APA 자동생성",
         "login": "로그인", "signup": "회원가입", "logout": "로그아웃",
         "username": "아이디", "password": "비밀번호", "email": "이메일",
         "password_confirm": "비밀번호 확인", "login_button": "로그인", "signup_button": "회원가입",
         "test_account": "🧪 테스트 계정 보기", "free_plan": "🆓 FREE 플랜", "pro_plan": "💎 PRO 회원",
         "remaining": "남은 횟수", "unlimited": "무제한", "upgrade": "💎 PRO 업그레이드",
+        # 탭 이름
+        "contemplate_tab": "🧠 사유의 방", "master_tab": "🎓 거장과의 대화",
         "gap_tab": "🌱 Gap-Mining", "method_tab": "⚖️ 방법론", "draft_tab": "📝 드래프트",
         "polish_tab": "✍️ 윤문", "diagnosis_tab": "🔬 최종 진단", "submit_tab": "🏁 투고",
         "references_tab": "📚 참고문헌", "storage_tab": "💾 저장소",
-        "gap_title": "🌱 Gap-Mining", "gap_desc": "💡 연구의 독창성 검증 + 공백 발견 + 연구질문 개선",
-        "method_title": "⚖️ 방법론 검증", "method_desc": "🛡️ 심사위원 공격 예상 + 방어 전략",
-        "draft_title": "📝 드래프트 작성 (PRO)", "draft_desc": "🤖 Claude AI가 학술적 초안을 작성해드립니다",
-        "polish_title": "✍️ 윤문/교정 (PRO)", "polish_desc": "🤖 Claude AI가 학술적 표현으로 윤문해드립니다",
-        "diagnosis_title": "🔬 최종 논문 진단 (PRO)", "diagnosis_desc": "🔬 3-Engine 하이브리드: Perplexity + Gemini + Claude",
-        "submit_title": "🏁 투고 전략", "submit_desc": "📈 저널 추천 + Abstract 개선",
-        "references_title": "📚 APA 참고문헌", "references_desc": "📖 Perplexity 기반 최신 논문 + APA 7판 포맷",
+        # 사유의 방
+        "contemplate_title": "🧠 사유의 방",
+        "contemplate_desc": "💭 비정형적 공상 → 실증적 연구 설계 전환 | Gemini Bridge Logic",
+        "contemplate_input": "자유롭게 떠오르는 생각, 사회 이슈, 공상을 입력하세요",
+        "contemplate_placeholder": "예: 요즘 카페에서 노트북 하는 사람이 많아졌는데, 이게 생산성에 영향을 줄까?\n예: SNS에서 본 뉴스만 보는 사람들이 점점 극단적이 되는 것 같다\n예: AI가 그림을 그리면 그건 예술일까?",
+        "contemplate_button": "🧠 연구 설계로 전환",
+        "contemplate_depth": "사유 깊이",
+        "depth_spark": "🔥 스파크 (빠른 변환)",
+        "depth_explore": "🔭 탐색 (변수 확장)",
+        "depth_architect": "🏗️ 설계 (완전 프레임워크)",
+        # 거장과의 대화
+        "master_title": "🎓 거장과의 대화",
+        "master_desc": "📖 거장의 인식론으로 당신의 연구 문제를 재해석 | Perplexity 실시간 검증",
+        "master_input": "거장에게 질문할 연구 문제를 입력하세요",
+        "master_placeholder": "예: 디지털 플랫폼이 노동시장 불평등을 심화시키는가?\n예: 양자컴퓨팅이 암호체계에 미치는 영향은?\n예: 생성AI 시대의 저작권은 어떻게 재정의되어야 하는가?",
+        "master_button": "🎓 거장에게 질문",
+        "master_select": "거장 선택",
+        "master_category": "분야",
+        "cat_social": "🏛️ 사회과학",
+        "cat_engineer": "⚙️ 공학·자연과학",
+        "cat_art": "🎨 예술·인문학",
+        # 기존 기능
+        "gap_title": "🌱 Gap-Mining", "gap_desc": "연구 독창성 검증 + 공백 발견 + 연구질문 개선",
+        "method_title": "⚖️ 방법론 검증", "method_desc": "심사위원 공격 예상 + 방어 전략",
+        "draft_title": "📝 드래프트 작성 (PRO)", "draft_desc": "Claude AI 학술적 초안 작성",
+        "polish_title": "✍️ 윤문/교정 (PRO)", "polish_desc": "Claude AI 학술적 표현 윤문",
+        "diagnosis_title": "🔬 최종 논문 진단 (PRO)", "diagnosis_desc": "3-Engine 하이브리드: Perplexity + Gemini + Claude",
+        "submit_title": "🏁 투고 전략", "submit_desc": "저널 추천 + Abstract 개선",
+        "references_title": "📚 APA 참고문헌", "references_desc": "Perplexity 기반 최신 논문 + APA 7판",
+        # 공통
         "file_upload": "📄 파일 업로드", "analyze_button": "🔍 분석 시작", "validate_button": "🧪 검증",
         "strategy_button": "📤 전략 생성", "search_button": "📚 참고문헌 찾기", "analyzing": "분석 중...",
         "result": "결과", "download": "💾 저장", "ask_more": "💬 연속 질문", "repolish": "🔄 다시 윤문",
@@ -58,23 +82,43 @@ LANGUAGES = {
     "en": {
         "name": "English", "flag": "🇺🇸",
         "app_title": "🎯 Strategist AI Pro",
-        "app_subtitle": "Academic Research Strategy | Auto PDF Analysis | APA Citation Generator",
+        "app_subtitle": "Academic Research Strategy | 3-Engine Hybrid | APA Generator",
         "login": "Login", "signup": "Sign Up", "logout": "Logout",
         "username": "Username", "password": "Password", "email": "Email",
         "password_confirm": "Confirm Password", "login_button": "Login", "signup_button": "Sign Up",
         "test_account": "🧪 View Test Account", "free_plan": "🆓 FREE Plan", "pro_plan": "💎 PRO Member",
         "remaining": "Remaining", "unlimited": "Unlimited", "upgrade": "💎 Upgrade to PRO",
+        "contemplate_tab": "🧠 Contemplation", "master_tab": "🎓 Master Dialogue",
         "gap_tab": "🌱 Gap-Mining", "method_tab": "⚖️ Methodology", "draft_tab": "📝 Draft",
         "polish_tab": "✍️ Polish", "diagnosis_tab": "🔬 Diagnosis", "submit_tab": "🏁 Submission",
         "references_tab": "📚 References", "storage_tab": "💾 Storage",
-        "gap_title": "🌱 Gap-Mining", "gap_desc": "💡 Verify Originality + Find Gaps + Improve RQ",
-        "method_title": "⚖️ Methodology Validation", "method_desc": "🛡️ Anticipate Reviewer Attacks + Defense",
-        "draft_title": "📝 Draft Writing (PRO)", "draft_desc": "🤖 Claude AI writes academic drafts",
-        "polish_title": "✍️ Polishing (PRO)", "polish_desc": "🤖 Claude AI polishes to academic style",
-        "diagnosis_title": "🔬 Final Diagnosis (PRO)", "diagnosis_desc": "🔬 3-Engine Hybrid: Perplexity + Gemini + Claude",
-        "submit_title": "🏁 Submission Strategy", "submit_desc": "📈 Journal Recommendations + Abstract Improvement",
-        "references_title": "📚 APA References", "references_desc": "📖 Latest Papers via Perplexity + APA 7th",
-        "file_upload": "📄 Upload File", "analyze_button": "🔍 Start Analysis", "validate_button": "🧪 Validate",
+        "contemplate_title": "🧠 Contemplation Room",
+        "contemplate_desc": "💭 Raw ideas → Empirical research design | Gemini Bridge Logic",
+        "contemplate_input": "Enter your raw thoughts, social issues, or daydreams",
+        "contemplate_placeholder": "e.g., More people work at cafes now—does ambient noise boost productivity?\ne.g., People only read news that confirms their views—echo chambers?\ne.g., If AI paints, is it art?",
+        "contemplate_button": "🧠 Transform to Research Design",
+        "contemplate_depth": "Depth Level",
+        "depth_spark": "🔥 Spark (Quick)",
+        "depth_explore": "🔭 Explore (Variable Expansion)",
+        "depth_architect": "🏗️ Architect (Full Framework)",
+        "master_title": "🎓 Master Dialogue",
+        "master_desc": "📖 Reinterpret your research through a master's epistemology | Perplexity-verified",
+        "master_input": "Enter a research question for the master",
+        "master_placeholder": "e.g., Do digital platforms deepen labor inequality?\ne.g., How will quantum computing affect cryptography?\ne.g., How should copyright be redefined in the generative AI era?",
+        "master_button": "🎓 Ask the Master",
+        "master_select": "Select Master",
+        "master_category": "Field",
+        "cat_social": "🏛️ Social Science",
+        "cat_engineer": "⚙️ Engineering & Science",
+        "cat_art": "🎨 Arts & Humanities",
+        "gap_title": "🌱 Gap-Mining", "gap_desc": "Verify Originality + Find Gaps + Improve RQ",
+        "method_title": "⚖️ Methodology Validation", "method_desc": "Anticipate Reviewer Attacks + Defense",
+        "draft_title": "📝 Draft Writing (PRO)", "draft_desc": "Claude AI writes academic drafts",
+        "polish_title": "✍️ Polishing (PRO)", "polish_desc": "Claude AI polishes to academic style",
+        "diagnosis_title": "🔬 Final Diagnosis (PRO)", "diagnosis_desc": "3-Engine Hybrid: Perplexity + Gemini + Claude",
+        "submit_title": "🏁 Submission Strategy", "submit_desc": "Journal Recommendations + Abstract",
+        "references_title": "📚 APA References", "references_desc": "Latest Papers via Perplexity + APA 7th",
+        "file_upload": "📄 Upload File", "analyze_button": "🔍 Analyze", "validate_button": "🧪 Validate",
         "strategy_button": "📤 Generate Strategy", "search_button": "📚 Find References", "analyzing": "Analyzing...",
         "result": "Result", "download": "💾 Download", "ask_more": "💬 Ask More", "repolish": "🔄 Re-polish",
         "placeholder_idea": "Enter your research idea...", "placeholder_method": "Enter your methodology...",
@@ -88,7 +132,7 @@ LANGUAGES = {
     }
 }
 
-def get_text(key):
+def T(key):
     lang = st.session_state.get("language", "ko")
     return LANGUAGES.get(lang, LANGUAGES["ko"]).get(key, key)
 
@@ -96,8 +140,7 @@ if "language" not in st.session_state:
     st.session_state.language = "ko"
 
 # ============================================
-# 🔒 API 설정 (st.secrets 보안 방식)
-# Streamlit Cloud > Settings > Secrets 에 키 입력
+# 🔒 API (st.secrets)
 # ============================================
 try:
     PPLX_API_KEY = st.secrets["api_keys"]["PPLX_API_KEY"]
@@ -106,612 +149,703 @@ try:
 except Exception:
     st.error("⚠️ API 키가 설정되지 않았습니다!")
     st.markdown("""
-### 🔧 Streamlit Cloud Secrets 설정 방법
-Dashboard → 앱 선택 → Settings → Secrets에 아래 내용 붙여넣기:
+### Streamlit Cloud → Settings → Secrets
 ```toml
 [api_keys]
-PPLX_API_KEY = "your-perplexity-key"
-GEMINI_API_KEY = "your-gemini-key"
-CLAUDE_API_KEY = "your-claude-key"
+PPLX_API_KEY = "pplx-..."
+GEMINI_API_KEY = "AIzaSy..."
+CLAUDE_API_KEY = "sk-ant-api03-..."
 ```
     """)
     st.stop()
 
-GEMINI_MODEL_NAME = "gemini-2.0-flash"
-CLAUDE_MODEL_NAME = "claude-sonnet-4-5-20250929"
+GEMINI_MODEL = "gemini-2.0-flash"
+CLAUDE_MODEL = "claude-sonnet-4-5-20250929"
 
-pplx_client = openai.OpenAI(api_key=PPLX_API_KEY, base_url="https://api.perplexity.ai")
+pplx = openai.OpenAI(api_key=PPLX_API_KEY, base_url="https://api.perplexity.ai")
 genai.configure(api_key=GEMINI_API_KEY)
-gemini_model = genai.GenerativeModel(GEMINI_MODEL_NAME)
-claude_client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
+gemini = genai.GenerativeModel(GEMINI_MODEL)
+claude = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
 
 # ============================================
-# 보안 시스템
+# 거장 데이터베이스
 # ============================================
-USER_DB_FILE = "users_db.json"
+MASTERS = {
+    "social": {
+        "Foucault": {"name_ko": "미셸 푸코", "frame": "power-knowledge nexus, discourse analysis, genealogy of institutions",
+                     "lens": "Analyze how power structures and institutional discourses shape the phenomenon. Identify whose knowledge is privileged and what is marginalized."},
+        "Bourdieu": {"name_ko": "피에르 부르디외", "frame": "habitus, cultural capital, field theory, symbolic violence",
+                     "lens": "Examine the role of cultural capital, habitus reproduction, and field dynamics. Identify symbolic violence mechanisms."},
+        "Weber": {"name_ko": "막스 베버", "frame": "ideal types, rationalization, verstehen, bureaucracy, legitimacy",
+                  "lens": "Construct ideal types for comparison. Analyze rationalization processes and legitimacy structures through interpretive understanding."},
+        "Habermas": {"name_ko": "위르겐 하버마스", "frame": "communicative action, public sphere, lifeworld vs system",
+                     "lens": "Evaluate communicative rationality vs strategic action. Assess public sphere conditions and system colonization of lifeworld."},
+        "Giddens": {"name_ko": "앤서니 기든스", "frame": "structuration theory, duality of structure, reflexive modernity",
+                    "lens": "Apply the duality of structure—how agents reproduce and transform structures through practice. Examine reflexive modernization."}
+    },
+    "engineer": {
+        "Einstein": {"name_ko": "알베르트 아인슈타인", "frame": "thought experiments, relativity of reference frames, invariance principles",
+                     "lens": "Strip the problem to its invariant core. Design thought experiments that isolate variables. Seek the simplest formulation that preserves all observable constraints."},
+        "Feynman": {"name_ko": "리처드 파인만", "frame": "first-principles reasoning, path integrals, simplification through analogy",
+                    "lens": "Decompose to first principles. If you cannot explain it simply, it is not understood. Map the problem space using multiple representational frames."},
+        "Turing": {"name_ko": "앨런 튜링", "frame": "computability, formal systems, machine intelligence, halting problem",
+                   "lens": "Define the problem as a formal system. Identify what is computable vs undecidable. Design the minimal machine that solves the stated task."},
+        "Shannon": {"name_ko": "클로드 섀넌", "frame": "information theory, entropy, channel capacity, signal vs noise",
+                    "lens": "Quantify information content and noise. Identify channel constraints. Optimize signal transmission within theoretical bounds."},
+        "Curie": {"name_ko": "마리 퀴리", "frame": "empirical rigor, measurement precision, systematic experimentation",
+                  "lens": "Design experiments with maximum measurement precision. Control for confounds systematically. Let data speak before theory."}
+    },
+    "art": {
+        "Bach": {"name_ko": "요한 세바스찬 바흐", "frame": "counterpoint, fugal structure, mathematical harmony, thematic transformation",
+                 "lens": "Identify the core theme and develop it through systematic variation. Layer multiple independent voices that create emergent harmony."},
+        "DaVinci": {"name_ko": "레오나르도 다 빈치", "frame": "interdisciplinary synthesis, observation-based design, sfumato thinking",
+                    "lens": "Cross-pollinate between domains. Begin with meticulous observation. Embrace ambiguity (sfumato) as a generative force rather than a problem."},
+        "Wittgenstein": {"name_ko": "루트비히 비트겐슈타인", "frame": "language games, family resemblance, limits of language, showing vs saying",
+                         "lens": "Examine the language game in which the problem exists. Identify what can be said clearly and what can only be shown. Map family resemblances."},
+        "Arendt": {"name_ko": "한나 아렌트", "frame": "vita activa, banality of evil, public space, natality, plurality",
+                   "lens": "Distinguish labor/work/action. Examine how plurality is maintained or destroyed. Assess whether the phenomenon creates or forecloses public space."},
+        "Barthes": {"name_ko": "롤랑 바르트", "frame": "mythology, death of the author, readerly vs writerly texts, punctum/studium",
+                    "lens": "Decode the mythology embedded in the phenomenon. Identify what punctum disrupts the studium. Analyze the gap between authorial intent and reader production."}
+    }
+}
 
-def secure_file_permissions():
-    try:
-        if os.path.exists(USER_DB_FILE):
-            os.chmod(USER_DB_FILE, 0o600)
-    except: pass
+# ============================================
+# Protocol-Task-Constraint 프롬프트 빌더
+# ============================================
+def build_prompt(protocol, task, constraint, payload, context=""):
+    """고밀도 명령어 구조: Protocol → Task → Constraint"""
+    parts = [
+        f"[PROTOCOL] {protocol}",
+        f"[CONTEXT] {context}" if context else "",
+        f"[INPUT] {payload}",
+        f"[TASK] {task}",
+        f"[CONSTRAINT] {constraint}"
+    ]
+    return "\n\n".join(p for p in parts if p)
 
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
 
-def verify_password(input_password, stored_hash):
-    return hash_password(input_password) == stored_hash
-
-def load_users():
-    try:
-        with open(USER_DB_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except: return {}
-
-def save_users(users):
-    with open(USER_DB_FILE, 'w', encoding='utf-8') as f:
-        json.dump(users, f, indent=2, ensure_ascii=False)
-    secure_file_permissions()
-
-def init_test_accounts():
-    users = load_users()
-    changed = False
-    if "test_free" not in users:
-        users["test_free"] = {
-            "password": hash_password("Test1234!"),
-            "email": "free@test.com",
-            "tier": "free",
-            "usage_count": 0,
-            "week_start": datetime.now().isoformat(),
-            "created_at": datetime.now().isoformat()
+# ============================================
+# 사유의 방 (Gemini)
+# ============================================
+def contemplate(raw_idea, depth="explore", lang="ko"):
+    depth_configs = {
+        "spark": {
+            "task": "Extract 2 testable variables and 1 research question from this raw idea. Output: Variables → Hypothesis → RQ.",
+            "constraint": "Max 300 tokens. No preamble. Direct output only."
+        },
+        "explore": {
+            "task": "Transform this raw idea into empirical research design: (1) Extract IV/DV/Moderator/Mediator, (2) Map to theoretical framework, (3) Generate 3 hypotheses ranked by testability, (4) Suggest methodology.",
+            "constraint": "Max 800 tokens. Use structured headers. Cite framework names without explanation."
+        },
+        "architect": {
+            "task": "Full research architecture: (1) Conceptual model with all variable relationships, (2) Theoretical grounding with 2+ frameworks, (3) 3 hypotheses with operational definitions, (4) Mixed-methods design with sampling strategy, (5) Expected contribution to field, (6) Potential limitations and mitigation.",
+            "constraint": "Max 1500 tokens. Publication-ready structure. Include visual model description in text form."
         }
-        changed = True
-    if "test_pro" not in users:
-        users["test_pro"] = {
-            "password": hash_password("Test1234!"),
-            "email": "pro@test.com",
-            "tier": "pro",
-            "usage_count": 0,
-            "week_start": datetime.now().isoformat(),
-            "created_at": datetime.now().isoformat()
-        }
-        changed = True
-    if changed:
-        save_users(users)
+    }
+    cfg = depth_configs.get(depth, depth_configs["explore"])
 
-init_test_accounts()
+    if lang == "ko":
+        protocol = "학술 연구 설계 전환 엔진. 비정형 사고를 실증 가능한 연구 프레임워크로 변환한다."
+        constraint_suffix = " 한국어로 출력. 학술 용어는 영문 병기."
+    else:
+        protocol = "Academic research design transformation engine. Convert unstructured ideation into testable research frameworks."
+        constraint_suffix = " Output in English."
 
-def check_week_reset(user_data):
-    try:
-        week_start = datetime.fromisoformat(user_data.get("week_start", datetime.now().isoformat()))
-        return datetime.now() - week_start > timedelta(days=7)
-    except: return True
-
-def update_usage(username):
-    users = load_users()
-    if username in users:
-        if check_week_reset(users[username]):
-            users[username]["usage_count"] = 0
-            users[username]["week_start"] = datetime.now().isoformat()
-        users[username]["usage_count"] += 1
-        save_users(users)
-        return users[username]["usage_count"]
-    return 0
-
-def get_remaining_free_uses(username):
-    users = load_users()
-    if username in users:
-        user = users[username]
-        if check_week_reset(user): return 10
-        return max(0, 10 - user.get("usage_count", 0))
-    return 0
-
-# ============================================
-# 세션 상태 초기화
-# ============================================
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-if "username" not in st.session_state:
-    st.session_state.username = None
-if "user_tier" not in st.session_state:
-    st.session_state.user_tier = "free"
-if "sessions" not in st.session_state:
-    st.session_state.sessions = {"gap": {}, "method": {}, "draft": {}, "polish": {}, "diagnosis": {}, "submit": {}, "references": {}}
-if "chat_histories" not in st.session_state:
-    st.session_state.chat_histories = {"gap": [], "method": [], "submit": [], "references": []}
-
-# ============================================
-# 언어 선택 UI
-# ============================================
-col_space, col_lang = st.columns([5, 1])
-with col_lang:
-    current_lang = st.session_state.get("language", "ko")
-    selected_lang = st.selectbox(
-        "🌐",
-        options=list(LANGUAGES.keys()),
-        format_func=lambda x: f"{LANGUAGES[x]['flag']} {LANGUAGES[x]['name']}",
-        index=list(LANGUAGES.keys()).index(current_lang),
-        label_visibility="collapsed"
+    prompt = build_prompt(
+        protocol=protocol,
+        task=cfg["task"],
+        constraint=cfg["constraint"] + constraint_suffix,
+        payload=raw_idea
     )
-    if selected_lang != current_lang:
-        st.session_state.language = selected_lang
-        st.rerun()
-
-st.markdown("---")
-
-# ============================================
-# 로그인 페이지
-# ============================================
-if not st.session_state.logged_in:
-    st.markdown(f"<h1 style='text-align: center;'>{get_text('app_title')}</h1>", unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align: center; color: #888;'>{get_text('app_subtitle')}</p>", unsafe_allow_html=True)
-    st.markdown("---")
-
-    col_left, col_center, col_right = st.columns([1, 2, 1])
-
-    with col_center:
-        tab_login, tab_signup = st.tabs([get_text("login"), get_text("signup")])
-
-        with tab_login:
-            st.markdown(f"### {get_text('login')}")
-            with st.expander(get_text("test_account")):
-                st.info("**FREE**: test_free / Test1234!\n**PRO**: test_pro / Test1234!")
-            login_username = st.text_input(get_text("username"), key="login_user")
-            login_password = st.text_input(get_text("password"), type="password", key="login_pass")
-            if st.button(get_text("login_button"), type="primary", use_container_width=True):
-                users = load_users()
-                if login_username in users and verify_password(login_password, users[login_username]["password"]):
-                    st.session_state.logged_in = True
-                    st.session_state.username = login_username
-                    st.session_state.user_tier = users[login_username].get("tier", "free")
-                    st.success(f"✅ {get_text('welcome')}, {login_username}!")
-                    st.balloons()
-                    st.rerun()
-                else:
-                    st.error(get_text("invalid_cred"))
-
-        with tab_signup:
-            st.markdown(f"### {get_text('signup')}")
-            signup_username = st.text_input(get_text("username"), key="signup_user")
-            signup_email = st.text_input(get_text("email"), key="signup_email")
-            signup_password = st.text_input(get_text("password"), type="password", key="signup_pass")
-            signup_password_confirm = st.text_input(get_text("password_confirm"), type="password", key="signup_pass_confirm")
-            if st.button(get_text("signup_button"), type="primary", use_container_width=True):
-                users = load_users()
-                if len(signup_username) < 4:
-                    st.error("❌ Username must be at least 4 characters")
-                elif signup_username in users:
-                    st.error("❌ Username already exists")
-                elif signup_password != signup_password_confirm:
-                    st.error("❌ Passwords don't match")
-                elif len(signup_password) < 6:
-                    st.error("❌ Password must be at least 6 characters")
-                else:
-                    users[signup_username] = {
-                        "password": hash_password(signup_password),
-                        "email": signup_email,
-                        "tier": "free",
-                        "usage_count": 0,
-                        "week_start": datetime.now().isoformat(),
-                        "created_at": datetime.now().isoformat()
-                    }
-                    save_users(users)
-                    st.success("✅ Account created successfully! Please login.")
-
-        st.markdown("---")
-        st.caption(get_text("security"))
-    st.stop()
-
-# ============================================
-# 유틸리티
-# ============================================
-def extract_text(file):
-    if not file: return ""
     try:
-        if file.name.endswith('.pdf'):
-            reader = PyPDF2.PdfReader(file)
-            return "".join(page.extract_text() or "" for page in reader.pages)[:3000]
-        if file.name.endswith('.docx'):
-            doc = docx.Document(file)
-            return "\n".join(p.text.strip() for p in doc.paragraphs)[:3000]
-        return file.read().decode('utf-8', errors='ignore')[:3000]
+        result = gemini.generate_content(prompt)
+        return result.text
     except Exception as e:
-        return f"Error extracting text: {e}"
+        return f"❌ Gemini Error: {str(e)}"
 
+
+# ============================================
+# 거장과의 대화 (Perplexity)
+# ============================================
+def master_dialogue(question, master_key, category, lang="ko"):
+    master = MASTERS[category][master_key]
+    master_name = master["name_ko"] if lang == "ko" else master_key
+
+    if lang == "ko":
+        protocol = f"인식론 시뮬레이션 엔진. {master_name}의 학문적 사고 체계를 복제하여 연구 문제에 적용한다."
+        task = f"""이 연구 문제를 {master_name}의 인식론으로 재해석하라:
+(1) {master_name}의 핵심 프레임워크({master['frame']}) 적용
+(2) 이 관점에서 도출되는 연구질문 재구성
+(3) 방법론적 함의
+(4) 이 관점의 한계와 보완점
+(5) 최신 학술 동향에서 이 프레임워크의 현재 적용 사례"""
+        constraint = "최신 학술 논문 기반으로 실증적 근거 포함. 한국어 출력. 핵심 개념은 원어 병기. Max 1200 tokens."
+    else:
+        protocol = f"Epistemology simulation engine. Replicate {master_key}'s intellectual framework and apply to research problem."
+        task = f"""Reinterpret this research problem through {master_key}'s epistemology:
+(1) Apply core framework: {master['frame']}
+(2) Reconstructed research question from this lens
+(3) Methodological implications
+(4) Limitations of this perspective and complementary approaches
+(5) Current academic applications of this framework with recent citations"""
+        constraint = "Include empirical evidence from recent academic literature. English output. Max 1200 tokens."
+
+    lens_instruction = f"[EPISTEMOLOGICAL LENS] {master['lens']}"
+
+    prompt = build_prompt(
+        protocol=protocol,
+        task=task,
+        constraint=constraint,
+        payload=question,
+        context=lens_instruction
+    )
+    try:
+        response = pplx.chat.completions.create(
+            model="sonar-pro",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"❌ Perplexity Error: {str(e)}"
+
+
+# ============================================
+# 고도화된 기존 기능 (Protocol-Task-Constraint)
+# ============================================
 def analyze_with_ai(payload, mode):
     if not payload.strip():
-        return get_text("error_empty")
+        return T("error_empty")
+    lang = st.session_state.language
     try:
-        lang = st.session_state.language
-        search_prompts = {
-            "ko": f"학술 연구 관련 최신 정보: {payload[:500]}",
-            "en": f"Latest academic research info: {payload[:500]}"
-        }
-        p_response = pplx_client.chat.completions.create(
+        # Phase 1: Perplexity 학술 검색
+        search_q = f"Recent academic research: {payload[:500]}" if lang == "en" else f"학술 연구 최신 동향: {payload[:500]}"
+        p_resp = pplx.chat.completions.create(
             model="sonar-pro",
-            messages=[{"role": "user", "content": search_prompts.get(lang, search_prompts["ko"])}]
+            messages=[{"role": "user", "content": search_q}]
         )
-        context = p_response.choices[0].message.content
-        analysis_prompts = {
-            "ko": {
-                "gap": f"학술 DB 검색 결과:\n{context}\n\n사용자 연구:\n{payload}\n\n다음을 분석하세요:\n1. 연구 공백 3가지\n2. 개선된 연구질문\n3. Impact Score (0-100)",
-                "method": f"학술 DB 검색 결과:\n{context}\n\n방법론:\n{payload}\n\n다음을 분석하세요:\n1. 방법론 약점 3가지\n2. 방어 전략\n3. Impact Score (0-100)",
-                "submit": f"학술 DB 검색 결과:\n{context}\n\n논문:\n{payload}\n\n다음을 제공하세요:\n1. 적합한 저널 3곳\n2. Abstract 개선안\n3. Impact Score (0-100)",
-                "references": f"학술 DB 검색 결과:\n{context}\n\n주제: {payload}\n\nAPA 7판 형식으로 참고문헌 5-10개를 생성하세요."
+        context = p_resp.choices[0].message.content
+
+        # Phase 2: Gemini 분석 (Protocol-Task-Constraint)
+        prompts = {
+            "gap": {
+                "protocol": "Research gap identification engine." if lang == "en" else "연구 공백 식별 엔진.",
+                "task": "Identify: (1) 3 specific research gaps with evidence, (2) Improved research question addressing largest gap, (3) Impact Score 0-100 with justification." if lang == "en" else "식별: (1) 근거 기반 연구 공백 3개, (2) 최대 공백 해소 연구질문, (3) Impact Score 0-100 근거 포함.",
+                "constraint": f"Base analysis on: {context[:1000]}. {'English output.' if lang == 'en' else '한국어 출력.'} Max 800 tokens."
             },
-            "en": {
-                "gap": f"Academic DB results:\n{context}\n\nUser research:\n{payload}\n\nProvide:\n1. 3 Research Gaps\n2. Improved RQ\n3. Impact Score (0-100)",
-                "method": f"Academic DB results:\n{context}\n\nMethodology:\n{payload}\n\nProvide:\n1. 3 Weaknesses\n2. Defense Strategy\n3. Impact Score (0-100)",
-                "submit": f"Academic DB results:\n{context}\n\nPaper:\n{payload}\n\nProvide:\n1. 3 Journal Recommendations\n2. Abstract Improvement\n3. Impact Score (0-100)",
-                "references": f"Academic DB results:\n{context}\n\nTopic: {payload}\n\nGenerate 5-10 references in APA 7th format."
+            "method": {
+                "protocol": "Methodology stress-test engine." if lang == "en" else "방법론 스트레스 테스트 엔진.",
+                "task": "Execute: (1) 3 methodological vulnerabilities ranked by severity, (2) Reviewer attack vectors per vulnerability, (3) Defense strategy per attack, (4) Robustness Score 0-100." if lang == "en" else "실행: (1) 심각도순 방법론 취약점 3개, (2) 취약점별 심사위원 공격 벡터, (3) 공격별 방어 전략, (4) 견고성 점수 0-100.",
+                "constraint": f"Base analysis on: {context[:1000]}. {'English output.' if lang == 'en' else '한국어 출력.'} Max 800 tokens."
+            },
+            "submit": {
+                "protocol": "Journal-fit optimization engine." if lang == "en" else "저널 적합성 최적화 엔진.",
+                "task": "Deliver: (1) 3 target journals with fit-score, scope match rationale, recent similar publications, (2) Abstract rewrite optimized for top journal, (3) Submission timing recommendation." if lang == "en" else "제공: (1) 적합도 점수 포함 타겟 저널 3곳 + 유사 게재논문, (2) 1순위 저널 최적화 Abstract 재작성, (3) 투고 타이밍 권고.",
+                "constraint": f"Base analysis on: {context[:1000]}. {'English output.' if lang == 'en' else '한국어 출력.'} Max 800 tokens."
+            },
+            "references": {
+                "protocol": "APA 7th citation generator with verification." if lang == "en" else "APA 7판 참고문헌 생성 엔진.",
+                "task": "Generate 5-10 references: (1) APA 7th format strictly, (2) Relevance score per reference, (3) Categorize as foundational/methodological/recent." if lang == "en" else "5-10개 참고문헌 생성: (1) APA 7판 엄격 준수, (2) 관련성 점수, (3) 기초/방법론/최신으로 분류.",
+                "constraint": f"Base analysis on: {context[:1000]}. {'English output.' if lang == 'en' else '한국어 출력.'} Max 1000 tokens."
             }
         }
-        prompt = analysis_prompts.get(lang, analysis_prompts["ko"]).get(mode, "")
-        result = gemini_model.generate_content(prompt)
+        cfg = prompts.get(mode, prompts["gap"])
+        prompt = build_prompt(
+            protocol=cfg["protocol"],
+            task=cfg["task"],
+            constraint=cfg["constraint"],
+            payload=payload
+        )
+        result = gemini.generate_content(prompt)
         return result.text
     except Exception as e:
         return f"❌ Error: {str(e)}"
 
+
 def draft_with_claude(topic, section_type, lang="ko"):
-    prompts = {
-        "ko": {
-            "intro": f"""당신은 학술 논문 작성 전문가입니다.\n\n다음 주제로 Introduction 초안을 작성하세요:\n{topic}\n\n요구사항:\n- 학술적 톤\n- 명확한 논리 구조\n- 선행연구 필요성 언급\n- 연구 필요성 제시\n- 약 500-800자\n\n출력 형식:\n## Introduction\n\n[본문]""",
-            "method": f"""당신은 학술 논문 작성 전문가입니다.\n\n다음 연구에 대한 Methods 섹션 초안을 작성하세요:\n{topic}\n\n요구사항:\n- 연구 설계 명확히\n- 데이터 수집 방법\n- 분석 방법\n- 재현 가능하도록 상세히\n- 약 500-800자\n\n출력 형식:\n## Methods\n\n[본문]""",
-            "discussion": f"""당신은 학술 논문 작성 전문가입니다.\n\n다음 연구에 대한 Discussion 초안을 작성하세요:\n{topic}\n\n요구사항:\n- 결과의 의미 해석\n- 선행연구와 비교\n- 한계점 제시\n- 향후 연구 제안\n- 약 500-800자\n\n출력 형식:\n## Discussion\n\n[본문]"""
-        },
-        "en": {
-            "intro": f"""You are an academic writing expert.\n\nWrite an Introduction draft for:\n{topic}\n\nRequirements:\n- Academic tone\n- Clear logical structure\n- 500-800 words\n\nFormat:\n## Introduction\n\n[Content]""",
-            "method": f"""You are an academic writing expert.\n\nWrite a Methods section draft for:\n{topic}\n\nRequirements:\n- Clear research design\n- Data collection method\n- 500-800 words\n\nFormat:\n## Methods\n\n[Content]""",
-            "discussion": f"""You are an academic writing expert.\n\nWrite a Discussion draft for:\n{topic}\n\nRequirements:\n- Interpret results\n- Compare with prior research\n- 500-800 words\n\nFormat:\n## Discussion\n\n[Content]"""
-        }
+    section_tasks = {
+        "intro": "Write Introduction: (1) Research context with field positioning, (2) Gap identification from literature, (3) Purpose statement, (4) Significance, (5) RQ/Hypotheses.",
+        "method": "Write Methods: (1) Research design with justification, (2) Participants/sampling with power analysis rationale, (3) Instruments with validity evidence, (4) Procedure, (5) Analysis plan.",
+        "discussion": "Write Discussion: (1) Key findings interpretation, (2) Theoretical implications with framework integration, (3) Practical implications, (4) Limitations with mitigation, (5) Future research agenda."
     }
-    prompt = prompts.get(lang, prompts["ko"]).get(section_type, prompts["ko"]["intro"])
+    task = section_tasks.get(section_type, section_tasks["intro"])
+    lang_c = "한국어 출력. 학술 용어 영문 병기." if lang == "ko" else "English output."
+
+    prompt = build_prompt(
+        protocol="Academic manuscript drafting engine. Publication-ready quality.",
+        task=task,
+        constraint=f"500-800 words. Formal academic register. {lang_c}",
+        payload=topic
+    )
     try:
-        message = claude_client.messages.create(
-            model=CLAUDE_MODEL_NAME, max_tokens=2000, temperature=0.7,
+        msg = claude.messages.create(
+            model=CLAUDE_MODEL, max_tokens=2000, temperature=0.7,
             messages=[{"role": "user", "content": prompt}]
         )
-        return message.content[0].text
+        return msg.content[0].text
     except Exception as e:
-        return f"❌ Claude API Error: {str(e)}"
+        return f"❌ Claude Error: {str(e)}"
+
 
 def polish_with_claude(text, lang="ko"):
-    prompts = {
-        "ko": f"""당신은 학술 논문 윤문 전문가입니다.\n\n다음 텍스트를 학술적이고 세련된 표현으로 개선하세요:\n\n원문:\n{text}\n\n요구사항:\n1. 문법은 유지하되 표현을 학술적으로\n2. 어색한 표현 개선\n3. 전문 용어 사용\n4. 문장 구조 개선\n5. Before/After 명확히 구분\n6. 주요 변경사항 설명\n\n출력 형식:\n## 윤문 결과\n[개선된 텍스트]\n\n## 주요 변경사항\n1. [변경]: 이유\n\n## 스타일 평가\n- 학술성: X/100\n- 명확성: X/100\n- 간결성: X/100""",
-        "en": f"""You are an academic writing polishing expert.\n\nImprove the following text:\n\nOriginal:\n{text}\n\nRequirements:\n1. Academic expression\n2. Fix awkward phrasing\n3. Use technical terms\n4. Improve structure\n\nOutput:\n## Polished Result\n[Improved text]\n\n## Major Changes\n1. [Change]: Reason\n\n## Style Assessment\n- Academic: X/100\n- Clarity: X/100\n- Conciseness: X/100"""
-    }
-    prompt = prompts.get(lang, prompts["ko"])
+    lang_c = "한국어 출력." if lang == "ko" else "English output."
+    prompt = build_prompt(
+        protocol="Academic prose refinement engine.",
+        task="Refine: (1) Elevate register to publication standard, (2) Tighten syntax and eliminate redundancy, (3) Insert precise terminology, (4) Output Before/After comparison, (5) Score: Academic Rigor / Clarity / Conciseness each 0-100.",
+        constraint=f"Preserve original argument structure. {lang_c} Max 1200 tokens.",
+        payload=text
+    )
     try:
-        message = claude_client.messages.create(
-            model=CLAUDE_MODEL_NAME, max_tokens=2500, temperature=0.3,
+        msg = claude.messages.create(
+            model=CLAUDE_MODEL, max_tokens=2500, temperature=0.3,
             messages=[{"role": "user", "content": prompt}]
         )
-        return message.content[0].text
+        return msg.content[0].text
     except Exception as e:
-        return f"❌ Claude API Error: {str(e)}"
+        return f"❌ Claude Error: {str(e)}"
+
 
 def hybrid_diagnosis(paper_text, lang="ko"):
+    lang_c = "한국어 출력." if lang == "ko" else "English output."
     try:
         # Phase 1: Perplexity
-        pplx_prompt = {
-            "ko": f"다음 논문의 주제와 관련된 최신 학술 연구 동향을 분석하세요:\n\n{paper_text[:1500]}\n\n1. 최신 연구 동향 (2023-2026)\n2. 주요 선행 연구 비교\n3. 참고문헌 적정성\n4. 핵심 논의\n5. 학술적 위치\n\n500자 이내로 요약.",
-            "en": f"Analyze latest academic trends for this paper:\n\n{paper_text[:1500]}\n\n1. Latest trends (2023-2026)\n2. Prior study comparison\n3. Reference adequacy\n4. Key discussions\n5. Academic positioning\n\nSummarize within 500 words."
-        }
-        pplx_resp = pplx_client.chat.completions.create(
-            model="sonar-pro",
-            messages=[{"role": "user", "content": pplx_prompt.get(lang, pplx_prompt["ko"])}]
+        p1_prompt = build_prompt(
+            protocol="Academic literature positioning engine.",
+            task="Analyze: (1) Current field trajectory 2023-2026, (2) Key competing/complementary works, (3) Reference adequacy assessment, (4) Gap this paper addresses, (5) Positioning within field.",
+            constraint=f"Max 500 tokens. {lang_c}",
+            payload=paper_text[:1500]
         )
-        perplexity_analysis = pplx_resp.choices[0].message.content
+        p1 = pplx.chat.completions.create(model="sonar-pro", messages=[{"role": "user", "content": p1_prompt}])
+        perplexity_out = p1.choices[0].message.content
 
         # Phase 2: Gemini
-        gemini_prompt = {
-            "ko": f"당신은 학술 심사위원입니다.\n\n논문:\n{paper_text[:2000]}\n\n학술 DB 분석:\n{perplexity_analysis}\n\n평가:\n## 독창성 (X/100)\n## 연구 가치 (X/100)\n## Impact 예측\n## 학술적 공백 충족도 (X/100)\n**총평 (200자)**",
-            "en": f"You are an academic reviewer.\n\nPaper:\n{paper_text[:2000]}\n\nAcademic DB:\n{perplexity_analysis}\n\nEvaluate:\n## Originality (X/100)\n## Research Value (X/100)\n## Impact Prediction\n## Gap Fulfillment (X/100)\n**Overall (200 words)**"
-        }
-        gemini_analysis = gemini_model.generate_content(gemini_prompt.get(lang, gemini_prompt["ko"])).text
+        p2_prompt = build_prompt(
+            protocol="Research value assessment engine.",
+            task="Evaluate: (1) Originality X/100 with evidence, (2) Theoretical + Practical contribution, (3) Impact prediction (citation potential, field influence), (4) Gap fulfillment X/100.",
+            constraint=f"Max 600 tokens. {lang_c}",
+            payload=paper_text[:2000],
+            context=f"[LITERATURE ANALYSIS] {perplexity_out}"
+        )
+        gemini_out = gemini.generate_content(p2_prompt).text
 
         # Phase 3: Claude
-        claude_prompt = {
-            "ko": f"당신은 학술 논문 편집 전문가입니다.\n\n논문:\n{paper_text[:3000]}\n\nPerplexity 분석:\n{perplexity_analysis[:500]}\n\nGemini 평가:\n{gemini_analysis[:500]}\n\n평가:\n## 논리 전개 (X/100)\n## 문장 품질 (X/100)\n## 구조/형식 (X/100)\n## 개선 우선순위 Top 3",
-            "en": f"You are an academic editor.\n\nPaper:\n{paper_text[:3000]}\n\nPerplexity:\n{perplexity_analysis[:500]}\n\nGemini:\n{gemini_analysis[:500]}\n\nEvaluate:\n## Logic & Flow (X/100)\n## Writing Quality (X/100)\n## Structure (X/100)\n## Top 3 Improvements"
-        }
-        claude_msg = claude_client.messages.create(
-            model=CLAUDE_MODEL_NAME, max_tokens=2500, temperature=0.3,
-            messages=[{"role": "user", "content": claude_prompt.get(lang, claude_prompt["ko"])}]
+        p3_prompt = build_prompt(
+            protocol="Manuscript quality audit engine.",
+            task="Audit: (1) Logic & Flow X/100 with specific weak points, (2) Writing Quality X/100, (3) Structure completeness per IMRAD section, (4) Top 3 revision priorities with concrete action items.",
+            constraint=f"Max 800 tokens. {lang_c}",
+            payload=paper_text[:3000],
+            context=f"[LITERATURE] {perplexity_out[:500]}\n[VALUE] {gemini_out[:500]}"
         )
-        claude_analysis = claude_msg.content[0].text
+        c_msg = claude.messages.create(
+            model=CLAUDE_MODEL, max_tokens=2500, temperature=0.3,
+            messages=[{"role": "user", "content": p3_prompt}]
+        )
+        claude_out = c_msg.content[0].text
 
-        report = {
-            "ko": f"# 🔬 최종 논문 진단 보고서\n\n## 🎯 3-Engine 하이브리드 분석 결과\n\n---\n\n## 📊 Phase 1: 학술 DB 분석 (Perplexity)\n\n{perplexity_analysis}\n\n---\n\n## 💎 Phase 2: 창의성 & 가치 평가 (Gemini)\n\n{gemini_analysis}\n\n---\n\n## 🤖 Phase 3: 구조 & 문장 분석 (Claude)\n\n{claude_analysis}\n\n---\n\n## 🚨 최종 제출 전 체크리스트\n\n- [ ] 선행 연구 충분히 인용\n- [ ] 연구 공백 명확히 제시\n- [ ] 방법론 재현 가능성\n- [ ] 논리적 일관성\n- [ ] 문장 품질 확인\n- [ ] 구조적 완성도\n\n---\n\n*Powered by Perplexity + Gemini + Claude*",
-            "en": f"# 🔬 Final Paper Diagnosis Report\n\n## 🎯 3-Engine Hybrid Analysis\n\n---\n\n## 📊 Phase 1: Academic DB (Perplexity)\n\n{perplexity_analysis}\n\n---\n\n## 💎 Phase 2: Creativity & Value (Gemini)\n\n{gemini_analysis}\n\n---\n\n## 🤖 Phase 3: Structure & Writing (Claude)\n\n{claude_analysis}\n\n---\n\n## 🚨 Pre-Submission Checklist\n\n- [ ] Sufficient citations\n- [ ] Clear research gap\n- [ ] Reproducible methodology\n- [ ] Logical consistency\n- [ ] Writing quality\n- [ ] Structural completeness\n\n---\n\n*Powered by Perplexity + Gemini + Claude*"
-        }
-        return report.get(lang, report["ko"])
+        divider = "\n\n---\n\n"
+        if lang == "ko":
+            return f"# 🔬 최종 논문 진단 보고서{divider}## 📊 Phase 1: 학술 DB 분석 (Perplexity)\n\n{perplexity_out}{divider}## 💎 Phase 2: 가치 평가 (Gemini)\n\n{gemini_out}{divider}## 🤖 Phase 3: 원고 품질 감사 (Claude)\n\n{claude_out}{divider}*Powered by Perplexity + Gemini + Claude*"
+        else:
+            return f"# 🔬 Final Diagnosis Report{divider}## 📊 Phase 1: Literature Analysis (Perplexity)\n\n{perplexity_out}{divider}## 💎 Phase 2: Value Assessment (Gemini)\n\n{gemini_out}{divider}## 🤖 Phase 3: Manuscript Audit (Claude)\n\n{claude_out}{divider}*Powered by Perplexity + Gemini + Claude*"
     except Exception as e:
         return f"❌ Hybrid Diagnosis Error: {str(e)}"
 
-def check_usage_limit():
-    if st.session_state.user_tier == "pro":
-        return True
-    remaining = get_remaining_free_uses(st.session_state.username)
-    if remaining <= 0:
-        st.error(get_text("error_limit"))
-        st.warning(f"💎 {get_text('upgrade')}")
+
+# ============================================
+# 사용자 시스템
+# ============================================
+USER_DB_FILE = "users_db.json"
+
+def hash_pw(pw): return hashlib.sha256(pw.encode()).hexdigest()
+def verify_pw(inp, stored): return hash_pw(inp) == stored
+def load_users():
+    try:
+        with open(USER_DB_FILE, 'r', encoding='utf-8') as f: return json.load(f)
+    except: return {}
+def save_users(users):
+    with open(USER_DB_FILE, 'w', encoding='utf-8') as f: json.dump(users, f, indent=2, ensure_ascii=False)
+    try: os.chmod(USER_DB_FILE, 0o600)
+    except: pass
+
+def init_accounts():
+    users = load_users()
+    ch = False
+    for uname, tier in [("test_free", "free"), ("test_pro", "pro")]:
+        if uname not in users:
+            users[uname] = {"password": hash_pw("Test1234!"), "email": f"{tier}@test.com", "tier": tier,
+                            "usage_count": 0, "week_start": datetime.now().isoformat(), "created_at": datetime.now().isoformat()}
+            ch = True
+    if ch: save_users(users)
+init_accounts()
+
+def check_reset(ud):
+    try: return datetime.now() - datetime.fromisoformat(ud.get("week_start", datetime.now().isoformat())) > timedelta(days=7)
+    except: return True
+
+def update_usage(un):
+    users = load_users()
+    if un in users:
+        if check_reset(users[un]):
+            users[un]["usage_count"] = 0
+            users[un]["week_start"] = datetime.now().isoformat()
+        users[un]["usage_count"] += 1
+        save_users(users)
+
+def remaining_uses(un):
+    users = load_users()
+    if un in users:
+        if check_reset(users[un]): return 10
+        return max(0, 10 - users[un].get("usage_count", 0))
+    return 0
+
+def check_limit():
+    if st.session_state.user_tier == "pro": return True
+    r = remaining_uses(st.session_state.username)
+    if r <= 0:
+        st.error(T("error_limit"))
+        st.warning(f"💎 {T('upgrade')}")
         return False
     return True
+
+def extract_text(file):
+    if not file: return ""
+    try:
+        if file.name.endswith('.pdf'):
+            return "".join(p.extract_text() or "" for p in PyPDF2.PdfReader(file).pages)[:3000]
+        if file.name.endswith('.docx'):
+            return "\n".join(p.text.strip() for p in docx.Document(file).paragraphs)[:3000]
+        return file.read().decode('utf-8', errors='ignore')[:3000]
+    except Exception as e: return f"Error: {e}"
+
+# ============================================
+# 세션 초기화
+# ============================================
+for k, v in [("logged_in", False), ("username", None), ("user_tier", "free"),
+             ("sessions", {"contemplate": {}, "master": {}, "gap": {}, "method": {}, "draft": {}, "polish": {}, "diagnosis": {}, "submit": {}, "references": {}})]:
+    if k not in st.session_state:
+        st.session_state[k] = v
+
+# ============================================
+# 언어 선택
+# ============================================
+_, col_lang = st.columns([5, 1])
+with col_lang:
+    cur = st.session_state.get("language", "ko")
+    sel = st.selectbox("🌐", list(LANGUAGES.keys()), format_func=lambda x: f"{LANGUAGES[x]['flag']} {LANGUAGES[x]['name']}",
+                       index=list(LANGUAGES.keys()).index(cur), label_visibility="collapsed")
+    if sel != cur:
+        st.session_state.language = sel
+        st.rerun()
+st.markdown("---")
+
+# ============================================
+# 로그인
+# ============================================
+if not st.session_state.logged_in:
+    st.markdown(f"<h1 style='text-align:center'>{T('app_title')}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center;color:#888'>{T('app_subtitle')}</p>", unsafe_allow_html=True)
+    st.markdown("---")
+    _, cc, _ = st.columns([1, 2, 1])
+    with cc:
+        t1, t2 = st.tabs([T("login"), T("signup")])
+        with t1:
+            st.markdown(f"### {T('login')}")
+            with st.expander(T("test_account")):
+                st.info("**FREE**: test_free / Test1234!\n**PRO**: test_pro / Test1234!")
+            lu = st.text_input(T("username"), key="lu")
+            lp = st.text_input(T("password"), type="password", key="lp")
+            if st.button(T("login_button"), type="primary", use_container_width=True):
+                users = load_users()
+                if lu in users and verify_pw(lp, users[lu]["password"]):
+                    st.session_state.logged_in = True
+                    st.session_state.username = lu
+                    st.session_state.user_tier = users[lu].get("tier", "free")
+                    st.success(f"✅ {T('welcome')}, {lu}!")
+                    st.balloons(); st.rerun()
+                else: st.error(T("invalid_cred"))
+        with t2:
+            st.markdown(f"### {T('signup')}")
+            su = st.text_input(T("username"), key="su")
+            se = st.text_input(T("email"), key="se")
+            sp = st.text_input(T("password"), type="password", key="sp")
+            spc = st.text_input(T("password_confirm"), type="password", key="spc")
+            if st.button(T("signup_button"), type="primary", use_container_width=True):
+                users = load_users()
+                if len(su) < 4: st.error("❌ 4자 이상")
+                elif su in users: st.error("❌ 이미 존재")
+                elif sp != spc: st.error("❌ 비밀번호 불일치")
+                elif len(sp) < 6: st.error("❌ 6자 이상")
+                else:
+                    users[su] = {"password": hash_pw(sp), "email": se, "tier": "free", "usage_count": 0,
+                                 "week_start": datetime.now().isoformat(), "created_at": datetime.now().isoformat()}
+                    save_users(users); st.success("✅ 가입 완료! 로그인하세요.")
+        st.markdown("---"); st.caption(T("security"))
+    st.stop()
 
 # ============================================
 # 사이드바
 # ============================================
 with st.sidebar:
-    st.markdown(f"## {get_text('app_title')}")
+    st.markdown(f"## {T('app_title')}")
     st.success(f"👤 **{st.session_state.username}**")
     if st.session_state.user_tier == "free":
-        remaining = get_remaining_free_uses(st.session_state.username)
-        st.warning(get_text("free_plan"))
-        st.progress(remaining / 10)
-        st.caption(f"{get_text('remaining')}: **{remaining}/10**")
-        st.caption(get_text("weekly_reset"))
-        if st.button(get_text("upgrade"), use_container_width=True):
-            st.info("💎 PRO upgrade coming soon!")
+        r = remaining_uses(st.session_state.username)
+        st.warning(T("free_plan")); st.progress(r / 10)
+        st.caption(f"{T('remaining')}: **{r}/10**"); st.caption(T("weekly_reset"))
+        if st.button(T("upgrade"), use_container_width=True): st.info("💎 PRO coming soon!")
     else:
-        st.success(get_text("pro_plan"))
-        st.caption(f"✅ {get_text('unlimited')}")
+        st.success(T("pro_plan")); st.caption(f"✅ {T('unlimited')}")
     st.divider()
-    if st.button(get_text("logout"), use_container_width=True):
-        st.session_state.logged_in = False
-        st.session_state.username = None
-        st.session_state.user_tier = "free"
-        st.rerun()
-    st.divider()
-    st.caption(get_text("security"))
-    st.divider()
+    if st.button(T("logout"), use_container_width=True):
+        st.session_state.logged_in = False; st.session_state.username = None; st.session_state.user_tier = "free"; st.rerun()
+    st.divider(); st.caption(T("security")); st.divider()
     st.caption("🔧 Engine Status")
     st.caption("✅ Perplexity: sonar-pro")
-    st.caption(f"✅ Gemini: {GEMINI_MODEL_NAME}")
-    st.caption(f"✅ Claude: {CLAUDE_MODEL_NAME}")
+    st.caption(f"✅ Gemini: {GEMINI_MODEL}")
+    st.caption(f"✅ Claude: {CLAUDE_MODEL}")
 
 # ============================================
 # 메인 앱
 # ============================================
-st.title(get_text("app_title"))
-st.markdown(get_text("app_subtitle"))
+st.title(T("app_title"))
+st.markdown(T("app_subtitle"))
 st.markdown("---")
 
 tabs = st.tabs([
-    get_text("gap_tab"), get_text("method_tab"), get_text("draft_tab"),
-    get_text("polish_tab"), get_text("diagnosis_tab"), get_text("submit_tab"),
-    get_text("references_tab"), get_text("storage_tab")
+    T("contemplate_tab"), T("master_tab"),
+    T("gap_tab"), T("method_tab"), T("draft_tab"), T("polish_tab"),
+    T("diagnosis_tab"), T("submit_tab"), T("references_tab"), T("storage_tab")
 ])
 
-# GAP 탭
+# ── 🧠 사유의 방 ──
 with tabs[0]:
-    st.header(get_text("gap_title"))
-    st.info(get_text("gap_desc"))
-    col1, col2 = st.columns([1, 3])
-    file_gap = col1.file_uploader(get_text("file_upload"), type=['pdf','docx','txt'], key="f1")
-    text_gap = col2.text_area("💡", height=150, placeholder=get_text("placeholder_idea"), key="t1")
-    if st.button(get_text("analyze_button"), type="primary", use_container_width=True):
-        if not check_usage_limit(): st.stop()
-        payload = extract_text(file_gap) or text_gap
-        if payload.strip():
-            with st.spinner(get_text("analyzing")):
-                result = analyze_with_ai(payload, "gap")
-                st.session_state.sessions["gap"] = {"result": result, "timestamp": datetime.now().isoformat()}
-                update_usage(st.session_state.username)
-                st.rerun()
-        else: st.error(get_text("error_empty"))
-    gap_data = st.session_state.sessions.get("gap")
-    if gap_data:
-        st.markdown(f"### 📊 {get_text('result')}")
-        st.markdown(gap_data['result'])
-        st.download_button(get_text("download"), gap_data['result'], "gap_analysis.txt")
-        follow_q = st.chat_input(get_text("ask_more"))
-        if follow_q:
-            with st.chat_message("user"): st.write(follow_q)
-            with st.spinner("..."):
-                answer = gemini_model.generate_content(f"{gap_data['result']}\n\n{follow_q}").text
-            with st.chat_message("assistant"): st.markdown(answer)
+    st.header(T("contemplate_title"))
+    st.info(T("contemplate_desc"))
+    raw_idea = st.text_area(T("contemplate_input"), height=180, placeholder=T("contemplate_placeholder"), key="contemplate_text")
+    c1, c2 = st.columns(2)
+    with c1:
+        depth = st.selectbox(T("contemplate_depth"),
+            ["spark", "explore", "architect"],
+            format_func=lambda x: {"spark": T("depth_spark"), "explore": T("depth_explore"), "architect": T("depth_architect")}[x])
+    with c2:
+        con_lang = st.selectbox("Language", ["ko", "en"], format_func=lambda x: "한국어" if x == "ko" else "English", key="con_lang")
+    if st.button(T("contemplate_button"), type="primary", use_container_width=True):
+        if not check_limit(): st.stop()
+        if raw_idea.strip():
+            with st.spinner(T("analyzing")):
+                result = contemplate(raw_idea, depth, con_lang)
+                st.session_state.sessions["contemplate"] = {"result": result}
+                update_usage(st.session_state.username); st.rerun()
+        else: st.error(T("error_empty"))
+    data = st.session_state.sessions.get("contemplate")
+    if data:
+        st.markdown(f"### 📊 {T('result')}")
+        st.markdown(data['result'])
+        st.download_button(T("download"), data['result'], "contemplation.txt")
 
-# 방법론 탭
+# ── 🎓 거장과의 대화 ──
 with tabs[1]:
-    st.header(get_text("method_title"))
-    st.info(get_text("method_desc"))
-    col1, col2 = st.columns([1, 3])
-    file_method = col1.file_uploader(get_text("file_upload"), type=['pdf','docx','txt'], key="f2")
-    text_method = col2.text_area("📊", height=150, placeholder=get_text("placeholder_method"), key="t2")
-    if st.button(get_text("validate_button"), type="primary", use_container_width=True):
-        if not check_usage_limit(): st.stop()
-        payload = extract_text(file_method) or text_method
-        if payload.strip():
-            with st.spinner(get_text("analyzing")):
-                result = analyze_with_ai(payload, "method")
-                st.session_state.sessions["method"] = {"result": result}
-                update_usage(st.session_state.username)
-                st.rerun()
-        else: st.error(get_text("error_empty"))
-    method_data = st.session_state.sessions.get("method")
-    if method_data:
-        st.markdown(f"### 📊 {get_text('result')}")
-        st.markdown(method_data['result'])
-        st.download_button(get_text("download"), method_data['result'], "method_validation.txt")
+    st.header(T("master_title"))
+    st.info(T("master_desc"))
+    cat = st.selectbox(T("master_category"), ["social", "engineer", "art"],
+        format_func=lambda x: {"social": T("cat_social"), "engineer": T("cat_engineer"), "art": T("cat_art")}[x])
+    lang_now = st.session_state.language
+    master_options = list(MASTERS[cat].keys())
+    master_labels = [f"{MASTERS[cat][m]['name_ko']} ({m})" if lang_now == "ko" else m for m in master_options]
+    master_key = st.selectbox(T("master_select"), master_options, format_func=lambda x: f"{MASTERS[cat][x]['name_ko']} ({x})" if lang_now == "ko" else x)
+    question = st.text_area(T("master_input"), height=150, placeholder=T("master_placeholder"), key="master_text")
+    m_lang = st.selectbox("Language", ["ko", "en"], format_func=lambda x: "한국어" if x == "ko" else "English", key="m_lang")
+    if st.button(T("master_button"), type="primary", use_container_width=True):
+        if not check_limit(): st.stop()
+        if question.strip():
+            master_display = MASTERS[cat][master_key]['name_ko'] if m_lang == "ko" else master_key
+            with st.spinner(f"🎓 {master_display} 사유 중..." if m_lang == "ko" else f"🎓 {master_display} is thinking..."):
+                result = master_dialogue(question, master_key, cat, m_lang)
+                st.session_state.sessions["master"] = {"result": result, "master": master_display}
+                update_usage(st.session_state.username); st.rerun()
+        else: st.error(T("error_empty"))
+    data = st.session_state.sessions.get("master")
+    if data:
+        st.markdown(f"### 🎓 {data.get('master', '')}의 답변")
+        st.markdown(data['result'])
+        st.download_button(T("download"), data['result'], "master_dialogue.txt")
 
-# 드래프트 탭
+# ── 🌱 Gap-Mining ──
 with tabs[2]:
-    st.header(get_text("draft_title"))
-    if st.session_state.user_tier != "pro":
-        st.warning(get_text("pro_only"))
-        if st.button(get_text("upgrade"), use_container_width=True, key="draft_upgrade"):
-            st.info("💎 PRO upgrade coming soon!")
-        st.stop()
-    st.info(get_text("draft_desc"))
-    draft_topic = st.text_area(get_text("draft_topic"), height=150, placeholder=get_text("placeholder_idea"), key="draft_input")
-    col1, col2 = st.columns(2)
-    with col1:
-        section_type = st.selectbox(get_text("section_select"), ["intro", "method", "discussion"],
-            format_func=lambda x: {"intro": "Introduction", "method": "Methods", "discussion": "Discussion"}[x])
-    with col2:
-        draft_lang = st.selectbox("Language", ["ko", "en"], format_func=lambda x: "한국어" if x == "ko" else "English")
-    if st.button(get_text("generate_draft"), type="primary", use_container_width=True):
-        if not check_usage_limit(): st.stop()
-        if draft_topic.strip():
-            with st.spinner(get_text("analyzing")):
-                result = draft_with_claude(draft_topic, section_type, draft_lang)
-                st.session_state.sessions["draft"] = {"result": result}
-                update_usage(st.session_state.username)
-                st.rerun()
-        else: st.error(get_text("error_empty"))
-    draft_data = st.session_state.sessions.get("draft")
-    if draft_data:
-        st.markdown(f"### 📄 {get_text('result')}")
-        st.markdown(draft_data['result'])
-        st.download_button(get_text("download"), draft_data['result'], "draft.txt")
+    st.header(T("gap_title")); st.info(T("gap_desc"))
+    c1, c2 = st.columns([1, 3])
+    fg = c1.file_uploader(T("file_upload"), type=['pdf','docx','txt'], key="f1")
+    tg = c2.text_area("💡", height=150, placeholder=T("placeholder_idea"), key="t1")
+    if st.button(T("analyze_button"), type="primary", use_container_width=True):
+        if not check_limit(): st.stop()
+        payload = extract_text(fg) or tg
+        if payload.strip():
+            with st.spinner(T("analyzing")):
+                r = analyze_with_ai(payload, "gap")
+                st.session_state.sessions["gap"] = {"result": r}; update_usage(st.session_state.username); st.rerun()
+        else: st.error(T("error_empty"))
+    d = st.session_state.sessions.get("gap")
+    if d:
+        st.markdown(f"### 📊 {T('result')}"); st.markdown(d['result'])
+        st.download_button(T("download"), d['result'], "gap_analysis.txt")
+        fq = st.chat_input(T("ask_more"))
+        if fq:
+            with st.chat_message("user"): st.write(fq)
+            with st.spinner("..."):
+                a = gemini.generate_content(f"{d['result']}\n\n{fq}").text
+            with st.chat_message("assistant"): st.markdown(a)
 
-# 윤문 탭
+# ── ⚖️ 방법론 ──
 with tabs[3]:
-    st.header(get_text("polish_title"))
-    if st.session_state.user_tier != "pro":
-        st.warning(get_text("pro_only"))
-        if st.button(get_text("upgrade"), use_container_width=True, key="polish_upgrade"):
-            st.info("💎 PRO upgrade coming soon!")
-        st.stop()
-    st.info(get_text("polish_desc"))
-    polish_text = st.text_area(get_text("polish_input"), height=200, placeholder="학술적으로 다듬을 텍스트...", key="polish_input_text")
-    polish_lang = st.selectbox("Language", ["ko", "en"], format_func=lambda x: "한국어 윤문" if x == "ko" else "English Polishing", key="polish_lang")
-    if st.button(get_text("start_polish"), type="primary", use_container_width=True):
-        if not check_usage_limit(): st.stop()
-        if polish_text.strip():
-            with st.spinner(get_text("analyzing")):
-                result = polish_with_claude(polish_text, polish_lang)
-                st.session_state.sessions["polish"] = {"result": result}
-                update_usage(st.session_state.username)
-                st.rerun()
-        else: st.error(get_text("error_empty"))
-    polish_data = st.session_state.sessions.get("polish")
-    if polish_data:
-        st.markdown(f"### ✨ {get_text('result')}")
-        st.markdown(polish_data['result'])
-        col1, col2 = st.columns(2)
-        with col1: st.download_button(get_text("download"), polish_data['result'], "polished.txt")
-        with col2:
-            if st.button(get_text("repolish")):
-                st.session_state.sessions["polish"] = {}
-                st.rerun()
+    st.header(T("method_title")); st.info(T("method_desc"))
+    c1, c2 = st.columns([1, 3])
+    fm = c1.file_uploader(T("file_upload"), type=['pdf','docx','txt'], key="f2")
+    tm = c2.text_area("📊", height=150, placeholder=T("placeholder_method"), key="t2")
+    if st.button(T("validate_button"), type="primary", use_container_width=True):
+        if not check_limit(): st.stop()
+        payload = extract_text(fm) or tm
+        if payload.strip():
+            with st.spinner(T("analyzing")):
+                r = analyze_with_ai(payload, "method")
+                st.session_state.sessions["method"] = {"result": r}; update_usage(st.session_state.username); st.rerun()
+        else: st.error(T("error_empty"))
+    d = st.session_state.sessions.get("method")
+    if d:
+        st.markdown(f"### 📊 {T('result')}"); st.markdown(d['result'])
+        st.download_button(T("download"), d['result'], "method_validation.txt")
 
-# 최종 진단 탭
+# ── 📝 드래프트 ──
 with tabs[4]:
-    st.header(get_text("diagnosis_title"))
+    st.header(T("draft_title"))
     if st.session_state.user_tier != "pro":
-        st.warning(get_text("pro_only"))
-        if st.button(get_text("upgrade"), use_container_width=True, key="diagnosis_upgrade"):
-            st.info("💎 PRO upgrade coming soon!")
+        st.warning(T("pro_only"))
+        if st.button(T("upgrade"), use_container_width=True, key="du"): st.info("💎 PRO coming soon!")
         st.stop()
-    st.info(get_text("diagnosis_desc"))
-    with st.expander("📖 3단계 하이브리드 분석 프로세스"):
-        st.markdown(f"""
-### 🔍 Phase 1: Perplexity (sonar-pro)
-최신 연구 동향 · 참고문헌 검증 · 학계 논의 분석
+    st.info(T("draft_desc"))
+    dt = st.text_area(T("draft_topic"), height=150, placeholder=T("placeholder_idea"), key="di")
+    c1, c2 = st.columns(2)
+    with c1: sec = st.selectbox(T("section_select"), ["intro", "method", "discussion"],
+                format_func=lambda x: {"intro": "Introduction", "method": "Methods", "discussion": "Discussion"}[x])
+    with c2: dl = st.selectbox("Language", ["ko", "en"], format_func=lambda x: "한국어" if x == "ko" else "English", key="dl")
+    if st.button(T("generate_draft"), type="primary", use_container_width=True):
+        if not check_limit(): st.stop()
+        if dt.strip():
+            with st.spinner(T("analyzing")):
+                r = draft_with_claude(dt, sec, dl)
+                st.session_state.sessions["draft"] = {"result": r}; update_usage(st.session_state.username); st.rerun()
+        else: st.error(T("error_empty"))
+    d = st.session_state.sessions.get("draft")
+    if d:
+        st.markdown(f"### 📄 {T('result')}"); st.markdown(d['result'])
+        st.download_button(T("download"), d['result'], "draft.txt")
 
-### 💎 Phase 2: Gemini ({GEMINI_MODEL_NAME})
-독창성 평가 · 연구 가치 · Impact 예측
-
-### 🤖 Phase 3: Claude ({CLAUDE_MODEL_NAME})
-논리 전개 · 문장 품질 · 구조 완성도
-
-→ **최종 통합 리포트 생성**
-        """)
-    col1, col2 = st.columns([1, 3])
-    file_diagnosis = col1.file_uploader(get_text("file_upload"), type=['pdf','docx','txt'], key="diagnosis_file")
-    text_diagnosis = col2.text_area(get_text("full_paper"), height=250, placeholder="완성된 논문 전체를 입력하세요...", key="diagnosis_input")
-    diagnosis_lang = st.selectbox("Language", ["ko", "en"], format_func=lambda x: "한국어" if x == "ko" else "English", key="diagnosis_lang")
-    if st.button("🔬 3-Engine 하이브리드 진단 시작", type="primary", use_container_width=True):
-        if not check_usage_limit(): st.stop()
-        payload = extract_text(file_diagnosis) or text_diagnosis
-        if payload.strip():
-            progress_bar = st.progress(0)
-            status = st.empty()
-            status.info("🔍 Phase 1/3: Perplexity 학술 DB 검색 중...")
-            progress_bar.progress(10)
-            with st.spinner("3-Engine 분석 중..."):
-                result = hybrid_diagnosis(payload, diagnosis_lang)
-                status.success("✅ 3-Engine 하이브리드 진단 완료!")
-                progress_bar.progress(100)
-                st.session_state.sessions["diagnosis"] = {"result": result}
-                update_usage(st.session_state.username)
-                st.rerun()
-        else: st.error(get_text("error_empty"))
-    diagnosis_data = st.session_state.sessions.get("diagnosis")
-    if diagnosis_data:
-        st.markdown("### 📋 3-Engine 하이브리드 진단 결과")
-        st.markdown(diagnosis_data['result'])
-        col1, col2, col3 = st.columns(3)
-        with col1: st.download_button("💾 리포트 저장", diagnosis_data['result'], "hybrid_diagnosis_report.txt")
-        with col2: st.download_button("📧 이메일용", diagnosis_data['result'], "diagnosis_email.txt")
-        with col3:
-            if st.button("🔄 재진단"):
-                st.session_state.sessions["diagnosis"] = {}
-                st.rerun()
-
-# 투고 탭
+# ── ✍️ 윤문 ──
 with tabs[5]:
-    st.header(get_text("submit_title"))
-    st.info(get_text("submit_desc"))
-    col1, col2 = st.columns([1, 3])
-    file_submit = col1.file_uploader(get_text("file_upload"), type=['pdf','docx','txt'], key="f3")
-    text_submit = col2.text_area("✍️", height=150, placeholder=get_text("placeholder_abstract"), key="t3")
-    if st.button(get_text("strategy_button"), type="primary", use_container_width=True):
-        if not check_usage_limit(): st.stop()
-        payload = extract_text(file_submit) or text_submit
-        if payload.strip():
-            with st.spinner(get_text("analyzing")):
-                result = analyze_with_ai(payload, "submit")
-                st.session_state.sessions["submit"] = {"result": result}
-                update_usage(st.session_state.username)
-                st.rerun()
-        else: st.error(get_text("error_empty"))
-    submit_data = st.session_state.sessions.get("submit")
-    if submit_data:
-        st.markdown(f"### 📊 {get_text('result')}")
-        st.markdown(submit_data['result'])
-        st.download_button(get_text("download"), submit_data['result'], "submission_strategy.txt")
+    st.header(T("polish_title"))
+    if st.session_state.user_tier != "pro":
+        st.warning(T("pro_only"))
+        if st.button(T("upgrade"), use_container_width=True, key="pu"): st.info("💎 PRO coming soon!")
+        st.stop()
+    st.info(T("polish_desc"))
+    pt = st.text_area(T("polish_input"), height=200, placeholder="학술적으로 다듬을 텍스트...", key="pi")
+    pl = st.selectbox("Language", ["ko", "en"], format_func=lambda x: "한국어 윤문" if x == "ko" else "English Polishing", key="pl")
+    if st.button(T("start_polish"), type="primary", use_container_width=True):
+        if not check_limit(): st.stop()
+        if pt.strip():
+            with st.spinner(T("analyzing")):
+                r = polish_with_claude(pt, pl)
+                st.session_state.sessions["polish"] = {"result": r}; update_usage(st.session_state.username); st.rerun()
+        else: st.error(T("error_empty"))
+    d = st.session_state.sessions.get("polish")
+    if d:
+        st.markdown(f"### ✨ {T('result')}"); st.markdown(d['result'])
+        c1, c2 = st.columns(2)
+        with c1: st.download_button(T("download"), d['result'], "polished.txt")
+        with c2:
+            if st.button(T("repolish")): st.session_state.sessions["polish"] = {}; st.rerun()
 
-# 참고문헌 탭
+# ── 🔬 최종 진단 ──
 with tabs[6]:
-    st.header(get_text("references_title"))
-    st.info(get_text("references_desc"))
-    ref_topic = st.text_input("🔍", placeholder=get_text("placeholder_topic"))
-    if st.button(get_text("search_button"), type="primary", use_container_width=True):
-        if not check_usage_limit(): st.stop()
-        if ref_topic.strip():
-            with st.spinner(get_text("analyzing")):
-                result = analyze_with_ai(ref_topic, "references")
-                st.session_state.sessions["references"] = {"result": result}
-                update_usage(st.session_state.username)
-                st.rerun()
-        else: st.error(get_text("error_empty"))
-    ref_data = st.session_state.sessions.get("references")
-    if ref_data:
-        st.markdown(f"### 📚 {get_text('result')}")
-        st.markdown(ref_data['result'])
-        st.download_button(get_text("download"), ref_data['result'], "references.txt")
+    st.header(T("diagnosis_title"))
+    if st.session_state.user_tier != "pro":
+        st.warning(T("pro_only"))
+        if st.button(T("upgrade"), use_container_width=True, key="dgu"): st.info("💎 PRO coming soon!")
+        st.stop()
+    st.info(T("diagnosis_desc"))
+    c1, c2 = st.columns([1, 3])
+    fd = c1.file_uploader(T("file_upload"), type=['pdf','docx','txt'], key="df")
+    td = c2.text_area(T("full_paper"), height=250, placeholder="완성된 논문...", key="dti")
+    ddl = st.selectbox("Language", ["ko", "en"], format_func=lambda x: "한국어" if x == "ko" else "English", key="ddl")
+    if st.button("🔬 3-Engine 하이브리드 진단", type="primary", use_container_width=True):
+        if not check_limit(): st.stop()
+        payload = extract_text(fd) or td
+        if payload.strip():
+            pb = st.progress(0); s = st.empty()
+            s.info("🔍 Phase 1/3: Perplexity..."); pb.progress(10)
+            with st.spinner("3-Engine 분석 중..."):
+                r = hybrid_diagnosis(payload, ddl)
+                s.success("✅ 완료!"); pb.progress(100)
+                st.session_state.sessions["diagnosis"] = {"result": r}; update_usage(st.session_state.username); st.rerun()
+        else: st.error(T("error_empty"))
+    d = st.session_state.sessions.get("diagnosis")
+    if d:
+        st.markdown("### 📋 진단 결과"); st.markdown(d['result'])
+        c1, c2, c3 = st.columns(3)
+        with c1: st.download_button("💾 리포트", d['result'], "diagnosis.txt")
+        with c2: st.download_button("📧 이메일용", d['result'], "diagnosis_email.txt")
+        with c3:
+            if st.button("🔄 재진단"): st.session_state.sessions["diagnosis"] = {}; st.rerun()
 
-# 저장소 탭
+# ── 🏁 투고 ──
 with tabs[7]:
-    st.header(f"💾 {get_text('storage_tab')}")
-    has_data = False
-    for name in ["gap", "method", "draft", "polish", "diagnosis", "submit", "references"]:
-        data = st.session_state.sessions.get(name)
-        if data and data.get("result"):
-            has_data = True
+    st.header(T("submit_title")); st.info(T("submit_desc"))
+    c1, c2 = st.columns([1, 3])
+    fs = c1.file_uploader(T("file_upload"), type=['pdf','docx','txt'], key="f3")
+    ts = c2.text_area("✍️", height=150, placeholder=T("placeholder_abstract"), key="t3")
+    if st.button(T("strategy_button"), type="primary", use_container_width=True):
+        if not check_limit(): st.stop()
+        payload = extract_text(fs) or ts
+        if payload.strip():
+            with st.spinner(T("analyzing")):
+                r = analyze_with_ai(payload, "submit")
+                st.session_state.sessions["submit"] = {"result": r}; update_usage(st.session_state.username); st.rerun()
+        else: st.error(T("error_empty"))
+    d = st.session_state.sessions.get("submit")
+    if d:
+        st.markdown(f"### 📊 {T('result')}"); st.markdown(d['result'])
+        st.download_button(T("download"), d['result'], "submission_strategy.txt")
+
+# ── 📚 참고문헌 ──
+with tabs[8]:
+    st.header(T("references_title")); st.info(T("references_desc"))
+    rt = st.text_input("🔍", placeholder=T("placeholder_topic"))
+    if st.button(T("search_button"), type="primary", use_container_width=True):
+        if not check_limit(): st.stop()
+        if rt.strip():
+            with st.spinner(T("analyzing")):
+                r = analyze_with_ai(rt, "references")
+                st.session_state.sessions["references"] = {"result": r}; update_usage(st.session_state.username); st.rerun()
+        else: st.error(T("error_empty"))
+    d = st.session_state.sessions.get("references")
+    if d:
+        st.markdown(f"### 📚 {T('result')}"); st.markdown(d['result'])
+        st.download_button(T("download"), d['result'], "references.txt")
+
+# ── 💾 저장소 ──
+with tabs[9]:
+    st.header(f"💾 {T('storage_tab')}")
+    has = False
+    for name in ["contemplate", "master", "gap", "method", "draft", "polish", "diagnosis", "submit", "references"]:
+        d = st.session_state.sessions.get(name)
+        if d and d.get("result"):
+            has = True
             with st.expander(f"📂 {name.upper()}"):
-                st.text_area(get_text("result"),
-                    data["result"][:500] + "..." if len(data["result"]) > 500 else data["result"],
-                    height=150, disabled=True, key=f"storage_{name}")
-    if not has_data:
-        st.info("No saved sessions yet. Start analyzing!")
+                st.text_area(T("result"), d["result"][:500] + "..." if len(d["result"]) > 500 else d["result"],
+                             height=150, disabled=True, key=f"s_{name}")
+    if not has: st.info("No saved sessions yet.")
     else:
-        backup_json = json.dumps(st.session_state.sessions, ensure_ascii=False, indent=2)
-        st.download_button(f"💾 {get_text('download')} All (JSON)", backup_json, "strategist_backup.json", use_container_width=True)
+        bj = json.dumps(st.session_state.sessions, ensure_ascii=False, indent=2)
+        st.download_button(f"💾 {T('download')} All (JSON)", bj, "strategist_backup.json", use_container_width=True)
 
 st.markdown("---")
-st.caption(f"*{get_text('app_title')} | 2026 | Powered by Perplexity + Gemini + Claude*")
-st.caption(f"✅ Engine: sonar-pro + {GEMINI_MODEL_NAME} + {CLAUDE_MODEL_NAME}")
+st.caption(f"*{T('app_title')} | 2026 | Powered by Perplexity + Gemini + Claude*")
+st.caption(f"✅ sonar-pro + {GEMINI_MODEL} + {CLAUDE_MODEL}")
