@@ -1,4 +1,4 @@
-# 🎯 Strategist AI Pro
+9# 🎯 Strategist AI Pro
 
 학술 연구 전략 컨설팅 | PDF 자동 분석 | APA 참고문헌 자동생성
 
@@ -42,8 +42,3 @@ streamlit run app.py
 | 📝 드래프트 | PRO | Claude |
 | ✍️ 윤문 | PRO | Claude |
 | 🔬 최종 진단 | PRO | Perplexity + Gemini + Claude |
-
-## 🧪 테스트 계정
-
-- **FREE**: `test_free` / `Test1234!`
-- **PRO**: `test_pro` / `Test1234!`
